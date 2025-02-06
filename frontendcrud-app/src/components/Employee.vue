@@ -24,7 +24,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label>Phone</label>
-                                <v-text-field v-model="employee.phone" label="Employee Address" required>
+                                <v-text-field v-model="employee.phone" label="Employee phone" required>
                                 </v-text-field>
 
                             </div>
