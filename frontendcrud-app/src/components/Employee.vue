@@ -1,142 +1,90 @@
 <template>
-    <div class="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 p-6">
-        <!-- Animated Header Section -->
-        <div class="container mx-auto max-w-7xl">
-            <div class="text-center mb-10">
-                <h1
-                    class="text-4xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
-                    Team Directory
-                </h1>
-                <p class="text-gray-600 mt-2">Streamline your workforce management</p>
+    <div class="container">
+        <h3 align="center" class="mt-5">Employee Management</h3>
+        <div class="row">
+            <div class="col-md-2">
             </div>
+            <div class="col-md-8">
+                <div class="form-area">
+                    <form @submit.prevent="save" id="check-register-form">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Employee Name</label>
+                                <v-text-field v-model="employee.name" label="Employee Name" required>
+                                </v-text-field>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Employee Address</label>
+                                <v-text-field v-model="employee.address" label="Employee Address" required>
+                                </v-text-field>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Phone</label>
+                                <v-text-field v-model="employee.phone" label="Employee phone" required>
+                                </v-text-field>
 
-            <!-- Quick Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <div class="bg-white/80 backdrop-blur rounded-xl p-4 shadow-lg border border-violet-100">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-violet-100 rounded-full flex items-center justify-center">
-                            <v-icon color="violet">mdi-account-group</v-icon>
+                            </div>
                         </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Total Team</p>
-                            <p class="text-2xl font-bold text-violet-600">{{ Object.keys(result).length }}</p>
+                        <div class="row">
+                            <div class="col-md-12 mt-3">
+                                <v-btn type="submit" color="success" form="check-register-form">Save</v-btn>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
-            </div>
+                <v-table theme="dark">
+                    <thead>
+                        <tr>
+                            <th class="text-left">
+                                Employee ID
+                            </th>
+                            <th class="text-left">
+                                Employee Name
+                            </th>
 
-            <!-- Employee Form Card -->
-            <div class="bg-white/90 backdrop-blur rounded-xl shadow-lg mb-8">
-                <div class="p-6 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-t-xl">
-                    <h2 class="text-xl font-semibold text-white">{{ employee.id ? 'Update Profile' : 'Add Team Member'
-                        }}</h2>
-                </div>
+                            <th class="text-left">
+                                Address
+                            </th>
 
-                <form @submit.prevent="save" class="p-6 grid gap-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Name Field -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                            <v-text-field v-model="employee.name" placeholder="Enter full name"
-                                class="rounded-lg bg-gray-50" variant="outlined" dense>
-                                <template v-slot:prepend>
-                                    <v-icon>mdi-account</v-icon>
-                                </template>
-                            </v-text-field>
-                        </div>
+                            <th class="text-left">
+                                Phone
+                            </th>
+                            <th class="text-left">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="employee in result" :key="employee.id">
+                            <td>{{ employee.id }}</td>
+                            <td>{{ employee.name }}</td>
+                            <td>{{ employee.address }}</td>
+                            <td>{{ employee.phone }}</td>
+                            <td>
+                                <v-btn type="button" color="info" @click="edit(employee)">Edit</v-btn>
 
-                        <!-- Address Field -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
-                            <v-text-field v-model="employee.address" placeholder="Enter address"
-                                class="rounded-lg bg-gray-50" variant="outlined" dense>
-                                <template v-slot:prepend>
-                                    <v-icon>mdi-map-marker</v-icon>
-                                </template>
-                            </v-text-field>
-                        </div>
-
-                        <!-- Phone Field -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-                            <v-text-field v-model="employee.phone" placeholder="Enter phone number"
-                                class="rounded-lg bg-gray-50" variant="outlined" dense>
-                                <template v-slot:prepend>
-                                    <v-icon>mdi-phone</v-icon>
-                                </template>
-                            </v-text-field>
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="flex gap-4">
-                        <v-btn type="submit" color="primary" class="px-6 rounded-full" :loading="loading">
-                            {{ employee.id ? 'Update' : 'Save' }}
-                        </v-btn>
-
-                        <v-btn v-if="employee.id" @click="resetForm" color="grey" variant="outlined"
-                            class="rounded-full">
-                            Cancel
-                        </v-btn>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Employee Table -->
-            <div class="bg-white/90 backdrop-blur rounded-xl shadow-lg overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-4 text-left text-sm font-medium text-gray-600">Profile</th>
-                                <th class="px-6 py-4 text-left text-sm font-medium text-gray-600">Contact Info</th>
-                                <th class="px-6 py-4 text-right text-sm font-medium text-gray-600">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            <tr v-for="emp in result" :key="emp.id" class="hover:bg-gray-50/50 transition-colors">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-4">
-                                        <div
-                                            class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white font-medium">
-                                            {{ emp.name.charAt(0) }}
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-gray-900">{{ emp.name }}</p>
-                                            <p class="text-sm text-gray-500">{{ emp.address }}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-2">
-                                        <v-icon size="small" color="gray">mdi-phone</v-icon>
-                                        <span class="text-gray-600">{{ emp.phone }}</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex gap-2 justify-end">
-                                        <v-btn color="primary" icon small @click="edit(emp)"
-                                            class="hover:scale-110 transition-transform">
-                                            <v-icon>mdi-pencil</v-icon>
-                                        </v-btn>
-
-                                        <v-btn color="error" icon small @click="remove(emp)"
-                                            class="hover:scale-110 transition-transform">
-                                            <v-icon>mdi-delete</v-icon>
-                                        </v-btn>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                <v-btn type="button" color="danger" @click="remove(employee)">Delete</v-btn>
+                            </td>
+                        </tr>
+                    </tbody>
+                </v-table>
             </div>
         </div>
     </div>
+
+
 </template>
 
+
 <script>
+
+
+
 import axios from 'redaxios';
+
+
 
 export default {
     name: 'Employee',
@@ -148,106 +96,103 @@ export default {
                 name: '',
                 address: '',
                 phone: ''
-            },
-            loading: false,
-            showDeleteDialog: false,
-            employeeToDelete: null
+
+
+            }
         }
     },
-
     created() {
         this.EmployeeLoad();
     },
+    mounted() {
+        console.log("mounted() called.......");
+
+    },
 
     methods: {
-        async EmployeeLoad() {
-            try {
-                const { data } = await axios.get('http://127.0.0.1:8000/api/employee');
-                this.result = data;
-            } catch (error) {
-                console.error('Error loading employees:', error);
-            }
+        EmployeeLoad() {
+            var page = "http://127.0.0.1:8000/api/employee";
+            axios.get(page)
+                .then(
+                    ({ data }) => {
+                        console.log(data);
+                        this.result = data;
+                    }
+                );
         },
 
-        async save() {
-            this.loading = true;
-            try {
-                if (this.employee.id) {
-                    await this.updateData();
-                } else {
-                    await this.saveData();
-                }
-            } finally {
-                this.loading = false;
-            }
-        },
 
-        async saveData() {
-            try {
-                await axios.post("http://127.0.0.1:8000/api/employee", this.employee);
-                this.EmployeeLoad();
-                this.resetForm();
-            } catch (error) {
-                console.error('Error saving employee:', error);
+        save() {
+            if (this.employee.id == '') {
+                this.saveData();
             }
-        },
+            else {
+                this.updateData();
+            }
 
+        },
+        saveData() {
+            axios.post("http://127.0.0.1:8000/api/employee", this.employee)
+                .then(
+                    ({ data }) => {
+                        this.EmployeeLoad();
+                        this.employee.name = '';
+                        this.employee.address = '',
+                            this.employee.phone = ''
+                        this.id = ''
+                    }
+                )
+
+        },
         edit(employee) {
-            this.employee = { ...employee };
+            this.employee = employee;
+
+        },
+        updateData() {
+            var editrecords = 'http://127.0.0.1:8000/api/employee/' + this.employee.id;
+            axios.put(editrecords, this.employee)
+                .then(
+                    ({ data }) => {
+                        this.employee.name = '';
+                        this.employee.address = '',
+                            this.employee.phone = ''
+                        this.id = ''
+                        alert("Updated!!!");
+                        this.EmployeeLoad();
+                    }
+                );
+
         },
 
-        async updateData() {
-            try {
-                const url = `http://127.0.0.1:8000/api/employee/${this.employee.id}`;
-                await axios.put(url, this.employee);
-                this.resetForm();
-                this.EmployeeLoad();
-            } catch (error) {
-                console.error('Error updating employee:', error);
-            }
-        },
+        remove(employee) {
 
-        confirmDelete(employee) {
-            this.employeeToDelete = employee;
-            this.showDeleteDialog = true;
-        },
+            var url = `http://127.0.0.1:8000/api/employee/${employee.id}`;
 
-        async handleDelete() {
-            if (!this.employeeToDelete) return;
 
-            try {
-                const url = `http://127.0.0.1:8000/api/employee/${this.employeeToDelete.id}`;
-                await axios.delete(url);
-                this.showDeleteDialog = false;
-                this.employeeToDelete = null;
-                this.EmployeeLoad();
-            } catch (error) {
-                console.error('Error deleting employee:', error);
-            }
-        },
-
-        resetForm() {
-            this.employee = {
-                id: '',
-                name: '',
-                address: '',
-                phone: ''
-            };
+            axios.delete(url);
+            alert("Deleteddd");
+            this.EmployeeLoad();
         }
     }
 }
 </script>
 
-<style>
-.v-text-field input {
-    background-color: white !important;
+<style scoped>
+.form-area {
+    padding: 20px;
+    margin-top: 20px;
+    background-color: #0b0b0b;
+    color: #fffcfc;
 }
 
-.v-btn {
-    text-transform: none !important;
+.bi-trash-fill {
+    color: red;
+    font-size: 18px;
 }
 
-.v-data-table {
-    background: transparent !important;
+.bi-pencil {
+    color: green;
+    font-size: 18px;
+    margin-left: 20px;
 }
 </style>
