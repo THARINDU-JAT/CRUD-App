@@ -12,3 +12,4 @@
 
 # using postman tool
 # Xampp local server
+# Read "How t run file"
