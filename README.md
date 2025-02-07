@@ -1,6 +1,6 @@
 # Task Management- App(Backend)
  
-# Testing phase
+# Testing phase(User Management function)
 
 # Testing Type - Functional testing
 
